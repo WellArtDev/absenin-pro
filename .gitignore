@@ -1,17 +1,28 @@
-# Dependencies
-/vendor/
+# Backend Dependencies
+/backend/vendor/
 
-# Environment
+# Backend Environment
 .env
 .env.local
 .env.*.local
 
-# Logs
-/logs/*.log
+# Backend Logs
+/backend/logs/*.log
 
-# Uploads (keep folder, ignore contents)
-/public/uploads/*
-!/public/uploads/.gitkeep
+# Backend Uploads
+/backend/public/uploads/*
+!/backend/public/uploads/.gitkeep
+
+# Frontend Dependencies
+/frontend/node_modules/
+
+# Frontend Build
+/frontend/.next/
+/frontend/out/
+
+# Frontend Environment
+/frontend/.env.local
+/frontend/.env.production
 
 # IDE
 .idea/

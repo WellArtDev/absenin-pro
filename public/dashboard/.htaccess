@@ -1,6 +1,0 @@
-DirectoryIndex index.php
-
-# Deny access to includes
-<FilesMatch "^(config|vendor|\.env)">
-    Require all denied
-</FilesMatch>

@@ -25,3 +25,6 @@ Desktop.ini
 
 # Laragon-specific (adjust if needed)
 *.test
+
+# GitHub Actions (needs workflow-scoped PAT)
+.github/

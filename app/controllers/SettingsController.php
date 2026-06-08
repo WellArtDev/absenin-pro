@@ -27,7 +27,7 @@ class SettingsController
 
     public function update(): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
 
         $model = new class($this->tenantId) extends Model {};
 

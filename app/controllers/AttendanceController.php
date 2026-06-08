@@ -24,12 +24,12 @@ class AttendanceController
 
     public function clockIn(): void
     {
-        $employeeId = $_POST['employee_id'] ?? '';
-        $deviceId = $_POST['device_id'] ?? '';
-        $gpsLat = (float) ($_POST['gps_lat'] ?? 0);
-        $gpsLng = (float) ($_POST['gps_lng'] ?? 0);
-        $gpsMode = $_POST['gps_mode'] ?? '';
-        $clientId = $_POST['client_id'] ?? null;
+        $employeeId = Sanitizer::uuid($_POST['employee_id'] ?? '');
+        $deviceId = Sanitizer::string($_POST['device_id'] ?? '', 255);
+        $gpsLat = Sanitizer::float($_POST['gps_lat'] ?? 0);
+        $gpsLng = Sanitizer::float($_POST['gps_lng'] ?? 0);
+        $gpsMode = Sanitizer::string($_POST['gps_mode'] ?? '', 20);
+        $clientId = !empty($_POST['client_id']) ? Sanitizer::uuid($_POST['client_id']) : null;
 
         if (empty($employeeId) || empty($deviceId)) {
             Response::validationError('Employee ID dan Device ID wajib');
@@ -67,7 +67,7 @@ class AttendanceController
 
     public function clockOut(): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
         $employeeId = $input['employee_id'] ?? '';
         $sessionId = $input['session_id'] ?? '';
 
@@ -96,7 +96,7 @@ class AttendanceController
 
     public function trackLocation(): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
         $sessionId = $input['session_id'] ?? '';
         $employeeId = $input['employee_id'] ?? '';
         $lat = (float) ($input['gps_lat'] ?? 0);
@@ -113,9 +113,8 @@ class AttendanceController
 
     public function log(): void
     {
-        $date = $_GET['date'] ?? DateHelper::today();
-        $page = (int) ($_GET['page'] ?? 1);
-        $limit = min((int) ($_GET['limit'] ?? PAGE_LIMIT_DEFAULT), PAGE_LIMIT_MAX);
+        $date = Request::getQuery('date', 'date', DateHelper::today());
+        ['page' => $page, 'limit' => $limit] = Request::getPagination();
 
         $result = $this->session->findByDate($date, $page, $limit);
         Response::success($result['data'], $result['meta']);
@@ -123,15 +122,15 @@ class AttendanceController
 
     public function summary(): void
     {
-        $date = $_GET['date'] ?? DateHelper::today();
+        $date = Request::getQuery('date', 'date', DateHelper::today());
         $summary = $this->session->getSummary($date);
         Response::success($summary);
     }
 
     public function report(): void
     {
-        $start = $_GET['start'] ?? DateHelper::today('Y-m-01');
-        $end = $_GET['end'] ?? DateHelper::today();
+        $start = Request::getQuery('start', 'date', DateHelper::today('Y-m-01'));
+        $end = Request::getQuery('end', 'date', DateHelper::today());
 
         $data = $this->session->getReport($start, $end);
         Response::success($data);
@@ -173,7 +172,7 @@ class AttendanceController
 
     public function dispute(): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
         $sessionId = $input['session_id'] ?? '';
         $employeeId = $input['employee_id'] ?? '';
         $reason = $input['reason'] ?? '';
@@ -188,7 +187,7 @@ class AttendanceController
 
     public function resolveDispute(): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
         $sessionId = $input['session_id'] ?? '';
         $overtimeHours = $input['overtime_hours'] ?? null;
 

@@ -17,9 +17,8 @@ class EmployeeController
 
     public function index(): void
     {
-        $page = (int) ($_GET['page'] ?? 1);
-        $limit = min((int) ($_GET['limit'] ?? PAGE_LIMIT_DEFAULT), PAGE_LIMIT_MAX);
-        $search = trim($_GET['search'] ?? '');
+        ['page' => $page, 'limit' => $limit] = Request::getPagination();
+        $search = Request::getQuery('search', 'string', '');
 
         $result = $this->model->findAll($page, $limit, $search);
         Response::success($result['data'], $result['meta']);
@@ -27,6 +26,11 @@ class EmployeeController
 
     public function show(string $id): void
     {
+        $id = Sanitizer::uuid($id);
+        if (empty($id)) {
+            Response::notFound('Karyawan tidak ditemukan');
+        }
+
         $employee = $this->model->findById($id);
         if (!$employee) {
             Response::notFound('Karyawan tidak ditemukan');
@@ -36,7 +40,7 @@ class EmployeeController
 
     public function store(): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
 
         $validator = new Validator($input);
         $validator->required('employee_code', 'name', 'email', 'phone', 'ktp_number', 'npwp_number', 'birth_date', 'birth_place', 'address', 'emergency_contact_name', 'emergency_contact_phone', 'division_id', 'position_id', 'employment_status', 'join_date');
@@ -56,7 +60,8 @@ class EmployeeController
 
     public function update(string $id): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $id = Sanitizer::uuid($id);
+        $input = Request::getJson();
         $validator = new Validator($input);
 
         if (isset($input['email'])) $validator->email('email');

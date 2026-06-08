@@ -12,7 +12,7 @@ class AuthController
 {
     public function login(): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
 
         $email = $input['email'] ?? '';
         $password = $input['password'] ?? '';
@@ -72,7 +72,7 @@ class AuthController
 
     public function refresh(): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
         $refreshToken = $input['refresh_token'] ?? '';
 
         if (empty($refreshToken)) {

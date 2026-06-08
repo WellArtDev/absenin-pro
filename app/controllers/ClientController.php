@@ -22,7 +22,7 @@ class ClientController
 
     public function store(): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
 
         if (empty($input['name']) || !isset($input['gps_lat']) || !isset($input['gps_lng'])) {
             Response::validationError('Nama, gps_lat, dan gps_lng wajib');
@@ -34,7 +34,7 @@ class ClientController
 
     public function update(string $id): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
         $this->model->edit($id, $input);
         Response::success(['id' => $id]);
     }

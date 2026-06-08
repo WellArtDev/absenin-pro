@@ -17,9 +17,8 @@ class LeaveController
 
     public function index(): void
     {
-        $page = (int) ($_GET['page'] ?? 1);
-        $limit = min((int) ($_GET['limit'] ?? PAGE_LIMIT_DEFAULT), PAGE_LIMIT_MAX);
-        $status = $_GET['status'] ?? '';
+        ['page' => $page, 'limit' => $limit] = Request::getPagination();
+        $status = Request::getQuery('status', 'string', '');
 
         $result = $this->model->findAll($page, $limit, $status);
         Response::success($result['data'], $result['meta']);
@@ -27,7 +26,7 @@ class LeaveController
 
     public function store(): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
 
         $validator = new Validator($input);
         $validator->required('employee_id', 'leave_type', 'start_date', 'end_date', 'reason');
@@ -47,7 +46,7 @@ class LeaveController
 
     public function approve(string $id): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
         $approvedBy = $input['approved_by'] ?? 'system';
 
         if (!$this->model->approve($id, $approvedBy)) {
@@ -58,7 +57,7 @@ class LeaveController
 
     public function reject(string $id): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
         $reason = $input['reason'] ?? '';
 
         if (empty($reason)) {
@@ -73,9 +72,9 @@ class LeaveController
 
     public function conflicts(): void
     {
-        $employeeId = $_GET['employee_id'] ?? '';
-        $start = $_GET['start_date'] ?? '';
-        $end = $_GET['end_date'] ?? '';
+        $employeeId = Request::getQuery('employee_id', 'uuid', '');
+        $start = Request::getQuery('start_date', 'date', '');
+        $end = Request::getQuery('end_date', 'date', '');
 
         if (empty($employeeId) || empty($start) || empty($end)) {
             Response::validationError('employee_id, start_date, dan end_date wajib');

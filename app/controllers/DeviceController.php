@@ -16,7 +16,7 @@ class DeviceController
 
     public function register(): void
     {
-        $input = json_decode(file_get_contents('php://input'), true);
+        $input = Request::getJson();
         $employeeId = $input['employee_id'] ?? '';
         $deviceId = $input['device_id'] ?? '';
         $platform = $input['platform'] ?? 'android';

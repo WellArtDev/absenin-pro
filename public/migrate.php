@@ -22,7 +22,6 @@ if (!file_exists($root . '/vendor/autoload.php')) {
     die(json_encode(['success' => false, 'error' => 'vendor not found', 'hint' => 'Run composer install on server or upload vendor/ folder']));
 }
 
-require_once $root . '/config/env.php';
 require_once $root . '/config/config.php';
 require_once $root . '/config/database.php';
 

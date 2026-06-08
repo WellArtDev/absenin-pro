@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  turbopack: false,
   rewrites: async () => [
     {
       source: '/api/v1/:path*',

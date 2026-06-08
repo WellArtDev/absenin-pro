@@ -2,7 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib/api';
-import MapView from '@/components/MapView';
+import dynamic from 'next/dynamic';
+
+const MapView = dynamic(() => import('@/components/MapView'), { ssr: false });
 
 interface Summary { hadir: number; terlambat: number; izin: number; cuti: number; total: number }
 interface LogEntry {

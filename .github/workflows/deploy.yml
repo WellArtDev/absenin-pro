@@ -45,9 +45,10 @@ jobs:
             **/.git*
             **/.git*/**
             node_modules/**
-            .next/**
             .gitignore
             .env.local
             .env.local.example
             DEPLOY_CPANEL.md
             README.md
+            app/**
+            components/**

@@ -1,11 +1,4 @@
 <?php
-/**
- * Web-accessible migration runner for cPanel (no SSH).
- * Access: https://api.absenin.com/migrate.php?key=YOUR_SECRET_KEY
- */
-
-require_once __DIR__ . '/../config/config.php';
-require_once __DIR__ . '/../config/database.php';
 
 $requiredKey = getenv('MIGRATE_KEY') ?: 'migrate-absenin-2026';
 $providedKey = $_GET['key'] ?? '';
@@ -17,11 +10,32 @@ if (empty($providedKey) || $providedKey !== $requiredKey) {
 
 header('Content-Type: application/json; charset=utf-8');
 
-$output = [];
-$db = Database::getInstance();
+$root = dirname(__DIR__);
 
+if (!file_exists($root . '/.env')) {
+    http_response_code(500);
+    die(json_encode(['success' => false, 'error' => '.env file not found', 'hint' => 'Copy .env.example to .env and configure']));
+}
+
+if (!file_exists($root . '/vendor/autoload.php')) {
+    http_response_code(500);
+    die(json_encode(['success' => false, 'error' => 'vendor not found', 'hint' => 'Run composer install on server or upload vendor/ folder']));
+}
+
+require_once $root . '/config/env.php';
+require_once $root . '/config/config.php';
+require_once $root . '/config/database.php';
+
+try {
+    $db = Database::getInstance();
+} catch (\Exception $e) {
+    http_response_code(500);
+    die(json_encode(['success' => false, 'error' => 'database_connection_failed', 'message' => $e->getMessage()]));
+}
+
+$output = [];
 $logTable = 'migrations_log';
-$migrationsDir = __DIR__ . '/../migrations';
+$migrationsDir = $root . '/migrations';
 
 try {
     $db->exec("CREATE TABLE IF NOT EXISTS {$logTable} (
@@ -33,6 +47,9 @@ try {
     $executed = $db->query("SELECT migration FROM {$logTable}")->fetchAll(PDO::FETCH_COLUMN);
 
     $files = glob($migrationsDir . '/*.sql');
+    if (empty($files)) {
+        die(json_encode(['success' => false, 'error' => 'No SQL migration files found']));
+    }
     sort($files);
 
     $count = 0;

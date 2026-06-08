@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/lib/api';
+import MapView from '@/components/MapView';
 
 interface Summary { hadir: number; terlambat: number; izin: number; cuti: number; total: number }
 interface LogEntry {
@@ -96,6 +97,7 @@ export default function DashboardHome() {
       </div>
 
       <div className="text-xs text-slate-300 mt-3 text-right">Terakhir refresh: {lastRefresh.toLocaleTimeString('id-ID')}</div>
+      <div className="mt-6"><MapView /></div>
     </div>
   );
 }

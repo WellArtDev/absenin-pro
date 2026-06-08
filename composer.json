@@ -1,0 +1,26 @@
+{
+  "name": "absenin/absenin",
+  "description": "Absenin - SaaS Presensi & Workforce Tracking",
+  "type": "project",
+  "require": {
+    "php": ">=8.0",
+    "firebase/php-jwt": "^6.0"
+  },
+  "autoload": {
+    "classmap": [
+      "app/controllers/",
+      "app/models/",
+      "app/helpers/",
+      "app/middleware/"
+    ]
+  },
+  "scripts": {
+    "migrate": "php migrations/migrate.php",
+    "serve": "php -S localhost:8000 -t public"
+  },
+  "config": {
+    "audit": {
+      "ignore": ["PKSA-y2cr-5h3j-g3ys"]
+    }
+  }
+}

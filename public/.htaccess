@@ -1,0 +1,14 @@
+RewriteEngine On
+
+# If file or directory exists, serve it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Route /api/* to API front controller
+RewriteRule ^api/(.*)$ index.php [QSA,L]
+
+# Route /dashboard/* to dashboard
+RewriteRule ^dashboard/(.*)$ dashboard/$1 [QSA,L]
+
+# Default: route to index.php
+RewriteRule ^(.*)$ index.php [QSA,L]

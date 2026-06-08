@@ -1,5 +1,3 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
 async function request(method: string, path: string, body?: unknown) {
   const opts: RequestInit = {
     method,
@@ -8,7 +6,7 @@ async function request(method: string, path: string, body?: unknown) {
   };
   if (body) opts.body = JSON.stringify(body);
 
-  const res = await fetch(`${API_BASE}/api/v1${path}`, opts);
+  const res = await fetch(`/api/v1${path}`, opts);
   const json = await res.json();
   if (!json.success) throw new Error(json.message || 'Request failed');
   return json;

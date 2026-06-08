@@ -7,7 +7,7 @@ require_once ROOT_DIR . '/config/env.php';
 date_default_timezone_set('Asia/Jakarta');
 
 define('APP_NAME', 'Absenin');
-define('APP_URL', getenv('APP_URL') ?: 'http://api.absenin.test');
+define('APP_URL', getenv('APP_URL') ?: 'https://api.absenin.com');
 define('APP_ENV', getenv('APP_ENV') ?: 'development');
 define('APP_DEBUG', filter_var(getenv('APP_DEBUG'), FILTER_VALIDATE_BOOLEAN));
 
@@ -31,6 +31,6 @@ define('SELFIE_MAX_WIDTH', 800);
 
 define('FCM_SERVER_KEY', getenv('FCM_SERVER_KEY') ?: '');
 
-define('CORS_ORIGINS', getenv('CORS_ORIGINS') ?: 'http://hub.absenin.test');
+define('CORS_ORIGINS', getenv('CORS_ORIGINS') ?: 'https://hub.absenin.com');
 
 require_once ROOT_DIR . '/config/constants.php';

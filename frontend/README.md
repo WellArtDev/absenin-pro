@@ -8,7 +8,7 @@ Next.js dashboard untuk Absenin — SaaS Multi-Tenant Presensi & Workforce Track
 cd frontend
 npm install
 cp .env.local.example .env.local
-# Edit .env.local: NEXT_PUBLIC_API_URL=http://api.absenin.test
+# Edit .env.local: NEXT_PUBLIC_API_URL=https://api.absenin.com
 npm run dev
 ```
 

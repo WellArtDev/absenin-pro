@@ -36,7 +36,7 @@ frontend/           # Next.js Dashboard
 cd backend
 cp .env.example .env
 composer install
-# Set virtual host: api.absenin.test → backend/public/
+# Set virtual host: api.absenin.test → backend/public/ (local) / api.absenin.com (production)
 php migrations/migrate.php
 ```
 
@@ -50,7 +50,8 @@ npm run dev
 
 ## API
 
-Base URL: `http://api.absenin.test/api/v1`
+Base URL (local): `http://api.absenin.test/api/v1`
+Base URL (prod): `https://api.absenin.com/api/v1`
 
 | Method   | Endpoint           | Description      |
 |----------|--------------------|------------------|

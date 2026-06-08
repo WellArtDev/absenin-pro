@@ -33,21 +33,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm ci
-        working-directory: ./frontend
-
-      - name: Build
-        run: npm run build
-        working-directory: ./frontend
-        env:
-          NEXT_PUBLIC_API_URL: https://api.absenin.com
-
       - name: Deploy to cPanel via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -60,10 +45,9 @@ jobs:
             **/.git*
             **/.git*/**
             node_modules/**
+            .next/**
             .gitignore
             .env.local
             .env.local.example
-            tsconfig.json
-            postcss.config.mjs
             DEPLOY_CPANEL.md
             README.md

@@ -1,50 +1,51 @@
-name: Deploy to cPanel
+name: Deploy
 
 on:
   push:
     branches: [main]
 
 jobs:
-  deploy-api:
-    name: Deploy API → api.absenin.com
+  deploy-backend:
+    name: Deploy Backend → api.absenin.com
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy API files via FTP
+      - name: Deploy backend via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
+          local-dir: ./backend/
           server-dir: /api.absenin.com/
           exclude: |
             **/.git*
             **/.git*/**
             .github/**
-            .gitignore
+            .env
+            .env.example
             README.md
-            public/dashboard/**
-            _bmad/**
-            _bmad-output/**
-            .agents/**
-            .opencode/**
-            .omc/**
-            design-artifacts/**
-            docs/**
 
-  deploy-dashboard:
-    name: Deploy Dashboard → hub.absenin.com
+  deploy-frontend:
+    name: Deploy Frontend → Vercel
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy Dashboard files via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Install dependencies
+        run: cd frontend && npm ci
+
+      - name: Build
+        run: cd frontend && npm run build
+        env:
+          NEXT_PUBLIC_API_URL: https://api.absenin.com
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
         with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: public/dashboard/
-          server-dir: /hub.absenin.com/
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./frontend

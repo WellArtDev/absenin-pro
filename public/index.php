@@ -29,6 +29,6 @@ $_SERVER['REQUEST_URI'] = Sanitizer::string($_SERVER['REQUEST_URI'] ?? '/', 2048
 $requestUri = $_SERVER['REQUEST_URI'];
 $requestUri = parse_url($requestUri, PHP_URL_PATH);
 
-$path = preg_replace('#^/api#', '', $requestUri);
+$path = preg_replace('#^/api/v1#', '', $requestUri) ?: '/';
 
 require_once __DIR__ . '/../api/v1/routes.php';

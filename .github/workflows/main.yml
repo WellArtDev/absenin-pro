@@ -1,0 +1,50 @@
+name: Deploy to cPanel
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-api:
+    name: Deploy API → api.absenin.com
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy API files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /home/absenin/api.absenin.com/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            .gitignore
+            README.md
+            public/dashboard/**
+            _bmad/**
+            _bmad-output/**
+            .agents/**
+            .opencode/**
+            .omc/**
+            design-artifacts/**
+            docs/**
+
+  deploy-dashboard:
+    name: Deploy Dashboard → hub.absenin.com
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy Dashboard files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: public/dashboard/
+          server-dir: /home/absenin/hub.absenin.com/

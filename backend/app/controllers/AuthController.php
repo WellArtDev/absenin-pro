@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../helpers/Response.php';
 require_once __DIR__ . '/../helpers/Auth.php';
+require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -84,7 +85,18 @@ class AuthController
 
             if (($decoded->type ?? '') !== 'refresh') {
                 Response::unauthorized('Invalid refresh token');
-            }
+    public function me(): void
+    {
+        $jwt = AuthMiddleware::api();
+        Response::success([
+            'id' => $jwt->sub,
+            'tenant_id' => $jwt->tenant_id,
+            'email' => $jwt->email ?? null,
+            'name' => $jwt->name ?? null,
+            'role' => $jwt->role ?? 'employee',
+        ]);
+    }
+}
 
             $now = time();
             $accessPayload = [
@@ -105,5 +117,17 @@ class AuthController
         } catch (\Exception $e) {
             Response::unauthorized('Invalid or expired refresh token');
         }
+    }
+
+    public function me(): void
+    {
+        $jwt = AuthMiddleware::api();
+        Response::success([
+            'id' => $jwt->sub,
+            'tenant_id' => $jwt->tenant_id,
+            'email' => $jwt->email ?? null,
+            'name' => $jwt->name ?? null,
+            'role' => $jwt->role ?? 'employee',
+        ]);
     }
 }

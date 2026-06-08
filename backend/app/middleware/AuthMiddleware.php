@@ -17,6 +17,14 @@ class AuthMiddleware
         Response::unauthorized('Token tidak ditemukan');
     }
 
+    public static function requireRole(object $jwt, array $allowedRoles): void
+    {
+        $role = $jwt->role ?? 'employee';
+        if (!in_array($role, $allowedRoles)) {
+            Response::forbidden('Akses ditolak — role tidak diizinkan');
+        }
+    }
+
     public static function web(): array
     {
         return Auth::requireSession();

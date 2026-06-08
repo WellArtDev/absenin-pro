@@ -2,22 +2,30 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LayoutDashboard, Users, ClipboardList, Clock, FileText, BarChart3, MapPin, Settings, Menu, X, ChevronLeft } from 'lucide-react';
+import { api } from '@/lib/api';
 
-const menuItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/dashboard/employees', label: 'Karyawan', icon: Users },
-  { href: '/dashboard/attendance', label: 'Presensi', icon: ClipboardList },
-  { href: '/dashboard/overtime', label: 'Lembur', icon: Clock },
-  { href: '/dashboard/leaves', label: 'Cuti & Izin', icon: FileText },
-  { href: '/dashboard/reports', label: 'Report', icon: BarChart3 },
-  { href: '/dashboard/clients', label: 'Klien', icon: MapPin },
-  { href: '/dashboard/settings', label: 'Pengaturan', icon: Settings },
+const allMenuItems = [
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'hr', 'manager', 'employee'] },
+  { href: '/dashboard/employees', label: 'Karyawan', icon: Users, roles: ['admin', 'hr', 'manager'] },
+  { href: '/dashboard/attendance', label: 'Presensi', icon: ClipboardList, roles: ['admin', 'hr', 'manager'] },
+  { href: '/dashboard/overtime', label: 'Lembur', icon: Clock, roles: ['admin', 'hr', 'manager'] },
+  { href: '/dashboard/leaves', label: 'Cuti & Izin', icon: FileText, roles: ['admin', 'hr', 'manager'] },
+  { href: '/dashboard/reports', label: 'Report', icon: BarChart3, roles: ['admin', 'hr'] },
+  { href: '/dashboard/clients', label: 'Klien', icon: MapPin, roles: ['admin', 'hr', 'manager'] },
+  { href: '/dashboard/settings', label: 'Pengaturan', icon: Settings, roles: ['admin'] },
 ];
 
 export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
   const pathname = usePathname();
+  const [role, setRole] = useState<string>('employee');
+
+  useEffect(() => {
+    api.get('/auth/me').then(r => setRole(r.data?.role || 'employee')).catch(() => {});
+  }, []);
+
+  const visibleItems = allMenuItems.filter(item => item.roles.includes(role));
 
   return (
     <>
@@ -33,7 +41,7 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
           </button>
         </div>
         <nav className="flex-1 p-2 overflow-y-auto">
-          {menuItems.map((item) => {
+          {visibleItems.map((item) => {
             const Icon = item.icon;
             const active = pathname === item.href || (item.href !== '/dashboard' && pathname?.startsWith(item.href));
             return (

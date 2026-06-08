@@ -19,6 +19,11 @@ if ($path === '/auth/refresh' && $method === 'POST') {
     (new AuthController())->refresh(); exit;
 }
 
+if ($path === '/auth/me' && $method === 'GET') {
+    require_once __DIR__ . '/../../app/controllers/AuthController.php';
+    (new AuthController())->me(); exit;
+}
+
 require_once __DIR__ . '/../../app/middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../../app/middleware/TenantMiddleware.php';
 require_once __DIR__ . '/../../app/middleware/RateLimitMiddleware.php';
@@ -26,6 +31,11 @@ require_once __DIR__ . '/../../app/middleware/RateLimitMiddleware.php';
 $jwt = AuthMiddleware::api();
 $tenantId = TenantMiddleware::fromJwt($jwt);
 RateLimitMiddleware::check("{$tenantId}:{$method}:{$path}");
+
+$role = $jwt->role ?? 'employee';
+$isAdmin = $role === 'admin';
+$isAdminOrHr = in_array($role, ['admin', 'hr']);
+$isAdminOrHrOrManager = in_array($role, ['admin', 'hr', 'manager']);
 
 if (preg_match('#^/employees$#', $path)) {
     require_once __DIR__ . '/../../app/controllers/EmployeeController.php';
@@ -42,6 +52,7 @@ if ($path === '/employees/import' && $method === 'POST') {
 if (preg_match('#^/employees/([a-f0-9\-]{36})$#', $path, $m)) {
     require_once __DIR__ . '/../../app/controllers/EmployeeController.php';
     $ctrl = new EmployeeController($tenantId);
+    if ($method === 'DELETE') AuthMiddleware::requireRole($jwt, ['admin', 'hr']);
     match ($method) {'GET' => $ctrl->show($m[1]), 'PUT' => $ctrl->update($m[1]), 'DELETE' => $ctrl->destroy($m[1]), default => Response::error('method_not_allowed', 'Method not allowed', 405)};
     exit;
 }
@@ -114,11 +125,13 @@ if (preg_match('#^/leaves$#', $path)) {
 }
 
 if (preg_match('#^/leaves/([a-f0-9\-]{36})/approve$#', $path, $m) && $method === 'POST') {
+    AuthMiddleware::requireRole($jwt, ['admin', 'hr', 'manager']);
     require_once __DIR__ . '/../../app/controllers/LeaveController.php';
     (new LeaveController($tenantId))->approve($m[1]); exit;
 }
 
 if (preg_match('#^/leaves/([a-f0-9\-]{36})/reject$#', $path, $m) && $method === 'POST') {
+    AuthMiddleware::requireRole($jwt, ['admin', 'hr', 'manager']);
     require_once __DIR__ . '/../../app/controllers/LeaveController.php';
     (new LeaveController($tenantId))->reject($m[1]); exit;
 }
@@ -148,11 +161,13 @@ if ($path === '/devices/register' && $method === 'POST') {
 }
 
 if ($path === '/settings' && $method === 'GET') {
+    AuthMiddleware::requireRole($jwt, ['admin', 'hr']);
     require_once __DIR__ . '/../../app/controllers/SettingsController.php';
     (new SettingsController($tenantId))->get(); exit;
 }
 
 if ($path === '/settings' && $method === 'PUT') {
+    AuthMiddleware::requireRole($jwt, ['admin']);
     require_once __DIR__ . '/../../app/controllers/SettingsController.php';
     (new SettingsController($tenantId))->update(); exit;
 }

@@ -28,24 +28,42 @@ jobs:
             README.md
 
   deploy-frontend:
-    name: Deploy Frontend → Vercel
+    name: Deploy Frontend → hub.absenin.com
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Install dependencies
-        run: cd frontend && npm ci
+        run: npm ci
+        working-directory: ./frontend
 
       - name: Build
-        run: cd frontend && npm run build
+        run: npm run build
+        working-directory: ./frontend
         env:
           NEXT_PUBLIC_API_URL: https://api.absenin.com
 
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
+      - name: Deploy to cPanel via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
-          working-directory: ./frontend
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./frontend/
+          server-dir: /hub.absenin.com/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            node_modules/**
+            .gitignore
+            .env.local
+            .env.local.example
+            tsconfig.json
+            postcss.config.mjs
+            DEPLOY_CPANEL.md
+            README.md

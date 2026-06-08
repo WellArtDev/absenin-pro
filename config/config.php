@@ -1,6 +1,7 @@
 <?php
 
 define('ROOT_DIR', dirname(__DIR__));
+require_once ROOT_DIR . '/vendor/autoload.php';
 require_once ROOT_DIR . '/config/env.php';
 
 date_default_timezone_set('Asia/Jakarta');

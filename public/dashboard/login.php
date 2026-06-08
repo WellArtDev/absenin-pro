@@ -21,6 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($user && password_verify($password, $user['password'])) {
             Auth::setSession($user);
+            $tokens = Auth::generateJwt($user);
+            setcookie('jwt', $tokens['access_token'], [
+                'expires' => time() + JWT_ACCESS_EXPIRY,
+                'path' => '/',
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
             header('Location: /dashboard/home.php');
             exit;
         } else {

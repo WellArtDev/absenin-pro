@@ -114,7 +114,7 @@ function deactivate(id) { if(!confirm('Nonaktifkan karyawan ini?')) return;
 function importCsv(input) {
   const file=input.files[0];if(!file)return;
   const fd=new FormData();fd.append('file',file);
-  fetch('/api/v1/employees/import',{method:'POST',body:fd}).then(r=>r.json()).then(r=>{
+  fetch('/api/v1/employees/import',{method:'POST',body:fd,credentials:'include'}).then(r=>r.json()).then(r=>{
     if(r.success) API.toast(`${r.data.imported} berhasil diimpor. ${r.data.errors.length} gagal.`);
     else API.toast(r.message,'error');
     loadEmployees();input.value='';

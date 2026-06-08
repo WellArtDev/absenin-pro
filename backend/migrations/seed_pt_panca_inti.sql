@@ -22,7 +22,7 @@ VALUES (
   NOW(3)
 );
 
--- 4. Employee users (for mobile login, password: admin123)
+-- 5. Employee users (for mobile login, password: admin123)
 INSERT INTO users (id, tenant_id, name, email, password, role, is_active, created_at, updated_at)
 VALUES
   (UUID(), @tenant_id, 'Budi Santoso', 'budi@pancainti.com', '$2y$10$SZGyy5wCGIuz4kHWaWYoLejuhjKSzD4Zv43IkzY6oEbMVNcayFEUK', 'employee', 1, NOW(3), NOW(3)),
@@ -31,9 +31,7 @@ VALUES
   (UUID(), @tenant_id, 'Dewi Lestari', 'dewi@pancainti.com', '$2y$10$SZGyy5wCGIuz4kHWaWYoLejuhjKSzD4Zv43IkzY6oEbMVNcayFEUK', 'employee', 1, NOW(3), NOW(3)),
   (UUID(), @tenant_id, 'Rudi Hermawan', 'rudi@pancainti.com', '$2y$10$SZGyy5wCGIuz4kHWaWYoLejuhjKSzD4Zv43IkzY6oEbMVNcayFEUK', 'employee', 1, NOW(3), NOW(3));
 
--- 5. Employee records (detail HR)
-
--- 5. Tenant settings
+-- 3. Tenant settings
 INSERT INTO tenant_settings (tenant_id, setting_key, setting_value)
 VALUES
   (@tenant_id, 'work_start', '09:00'),
@@ -42,7 +40,7 @@ VALUES
   (@tenant_id, 'overtime_mode', 'auto'),
   (@tenant_id, 'gps_default_mode', 'spesifik');
 
--- 5. Employee records (detail HR)
+-- 6. Employee records (detail HR)
 INSERT INTO employees (id, tenant_id, employee_code, name, email, phone, ktp_number, npwp_number, birth_date, birth_place, address, emergency_contact_name, emergency_contact_phone, division_id, position_id, employment_status, join_date, leave_balance, is_active, created_at, updated_at) VALUES
 (UUID(), @tenant_id, 'PIM001', 'Budi Santoso',   'budi@pancainti.com',   '08123456789', '3174010101920001', '-', '1992-03-15', 'Jakarta',        'Jl. Kenanga No. 12, Jakarta Selatan',  'Sari Wahyuni', '08129876543', 'DIV-01', 'POS-01', 'tetap',    '2024-01-15', 10, 1, NOW(3), NOW(3)),
 (UUID(), @tenant_id, 'PIM002', 'Siti Rahayu',    'siti@pancainti.com',   '08123456780', '3273014507950002', '-', '1995-07-22', 'Bandung',        'Jl. Melati No. 34, Bandung',           'Ahmad Dahlan',  '08129876544', 'DIV-02', 'POS-02', 'tetap',    '2024-02-01', 12, 1, NOW(3), NOW(3)),
@@ -50,7 +48,7 @@ INSERT INTO employees (id, tenant_id, employee_code, name, email, phone, ktp_num
 (UUID(), @tenant_id, 'PIM004', 'Dewi Lestari',   'dewi@pancainti.com',   '08123456782', '3174014205930003', '-', '1993-05-30', 'Jakarta',        'Jl. Anggrek No. 78, Jakarta Pusat',    'Budi Hartono',  '08129876546', 'DIV-03', 'POS-04', 'kontrak',  '2024-06-01', 12, 1, NOW(3), NOW(3)),
 (UUID(), @tenant_id, 'PIM005', 'Rudi Hermawan',  'rudi@pancainti.com',   '08123456783', '1271010909880002', '-', '1988-09-12', 'Medan',          'Jl. Dahlia No. 90, Medan',             'Rina Marlina',  '08129876547', 'DIV-02', 'POS-05', 'tetap',    '2023-12-01',  5, 1, NOW(3), NOW(3));
 
--- 6. Client/lokasi
+-- 7. Client/lokasi
 INSERT INTO clients (id, tenant_id, name, address, gps_lat, gps_lng, radius_meters, created_at, updated_at)
 VALUES
   (UUID(), @tenant_id, 'Kantor Pusat', 'Jl. Sudirman No. 123, Jakarta', -6.2088, 106.8456, 10, NOW(3), NOW(3)),

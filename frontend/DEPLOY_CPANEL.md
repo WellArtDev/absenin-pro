@@ -7,12 +7,14 @@ npm run build
 ```
 
 ## 2. Upload ke cPanel
-Upload semua file + folder KECUALI `node_modules/`:
+
+**⚠️ CloudLinux NodeJS Selector**: node_modules harus di virtual environment terpisah — jangan upload `node_modules/` ke app root! nanti cPanel bikin symlink otomatis.
+
+Upload file + folder berikut:
 - `.next/`
 - `public/`
 - `package.json`
 - `next.config.ts`
-- `.env.local`
 
 Target folder: `/home/absenin/hub.absenin.com/`
 
@@ -23,7 +25,9 @@ Target folder: `/home/absenin/hub.absenin.com/`
    - **Application mode**: Production
    - **Application root**: `/home/absenin/hub.absenin.com`
    - **Application URL**: `hub.absenin.com`
-   - **Application startup file**: `node_modules/.bin/next`
+    - **Application startup file**: `node_modules/.bin/next`
+    - **Passenger startup file**: (kosongkan)
+3. **Environment Variables**:
    - **Passenger startup file**: (kosongkan, pake node_modules/.bin/next)
 3. Environment Variables:
    ```

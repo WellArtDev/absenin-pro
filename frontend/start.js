@@ -30,8 +30,18 @@ const proxyToApi = async (req, res) => {
     const data = await fetchRes.json();
     res.setHeader('Content-Type', 'application/json');
 
+    if (data.success && data.data?.access_token) {
+      const cookie = `jwt=${data.data.access_token}; Path=/; HttpOnly; SameSite=Lax; Domain=.absenin.com; Max-Age=${data.data.expires_in || 86400}`;
+      res.setHeader('Set-Cookie', cookie);
+    }
+
     const setCookie = fetchRes.headers.get('set-cookie');
-    if (setCookie) res.setHeader('Set-Cookie', setCookie);
+    if (setCookie && !res.getHeader('Set-Cookie')) {
+      const parts = setCookie.split('; ');
+      const hasDomain = parts.some(p => p.toLowerCase().startsWith('domain='));
+      const rewritten = parts.map(p => p.toLowerCase().startsWith('domain=') ? 'domain=.absenin.com' : p).join('; ');
+      res.setHeader('Set-Cookie', hasDomain ? rewritten : `${rewritten}; domain=.absenin.com`);
+    }
 
     res.statusCode = fetchRes.status;
     res.end(JSON.stringify(data));

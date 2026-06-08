@@ -29,6 +29,10 @@ const proxyToApi = async (req, res) => {
 
     const data = await fetchRes.json();
     res.setHeader('Content-Type', 'application/json');
+
+    const setCookie = fetchRes.headers.get('set-cookie');
+    if (setCookie) res.setHeader('Set-Cookie', setCookie);
+
     res.statusCode = fetchRes.status;
     res.end(JSON.stringify(data));
   } catch {
